@@ -63,7 +63,7 @@ else
   fi
 fi
 
-for cmd in wget tar make; do
+for cmd in wget tar make rsync; do
   if ! command -v "$cmd" &>/dev/null; then
     echo "Error: $cmd not found." >&2
     exit 1
@@ -113,7 +113,9 @@ cd "${WORK_DIR}/musl-${MUSL_VERSION}"
     --target="${MUSL_TRIPLE}" \
     --prefix="/usr" \
     --syslibdir="/usr/lib" \
-    CC="${CC}"
+    CC="${CC}" \
+    AR="$(command -v ar)" \
+    RANLIB="$(command -v ranlib)"
 
 echo ""
 echo ">>> Building musl ($(nproc) jobs)..."

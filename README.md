@@ -10,7 +10,7 @@ Run on **Linux** (amd64 or arm64). Install build dependencies:
 
 ```bash
 sudo apt update
-sudo apt install build-essential wget xz-utils
+sudo apt install build-essential wget xz-utils rsync
 ```
 
 For **cross-compilation** (building a sysroot for a different arch than the host), install a cross-compiler:
