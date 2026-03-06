@@ -2,7 +2,7 @@
 set -euo pipefail
 
 MUSL_VERSION="1.2.5"
-LINUX_VERSION="6.12.73"
+LINUX_VERSION="6.12.76"
 TARGET_ARCH="x86_64"
 OUT_DIR="$(pwd)/output"
 

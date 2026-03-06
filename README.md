@@ -35,7 +35,7 @@ Alternatively, `clang` works as a cross-compiler for any target.
 | ----------------- | ---------- | ---------------------------------------------------------- |
 | `--arch`          | `x86_64`   | Target architecture: `x86_64`/`amd64` or `aarch64`/`arm64` |
 | `--musl-version`  | `1.2.5`    | musl libc version                                          |
-| `--linux-version` | `6.12.73`  | Linux kernel version (for UAPI headers)                    |
+| `--linux-version` | `6.12.76`  | Linux kernel version (for UAPI headers)                    |
 | `--out`           | `./output` | Output directory for the tarball                           |
 
 ## Build sysroots
@@ -56,8 +56,8 @@ Output tarballs are written to `./output/`:
 
 ```text
 output/
-├── musl-1.2.5-linux-6.12.73-sysroot-x86_64.tar.xz
-└── musl-1.2.5-linux-6.12.73-sysroot-aarch64.tar.xz
+├── musl-1.2.5-linux-6.12.76-sysroot-x86_64.tar.xz
+└── musl-1.2.5-linux-6.12.76-sysroot-aarch64.tar.xz
 ```
 
 ## Sysroot contents
@@ -88,4 +88,4 @@ usr/
 | Component            | Version       |
 | -------------------- | ------------- |
 | musl libc            | 1.2.5         |
-| Linux kernel headers | 6.12.73 (LTS) |
+| Linux kernel headers | 6.12.76 (LTS) |
