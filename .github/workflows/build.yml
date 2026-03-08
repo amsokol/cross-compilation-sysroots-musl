@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build:
-    name: Build sysroot (${{ matrix.arch }}, linux ${{ matrix.linux_version }})
+    name: Build sysroot (${{ matrix.arch }}, linux ${{ matrix.linux_version }}, ${{ matrix.profile }})
     runs-on: ${{ matrix.runner }}
     container:
       image: debian:13
@@ -20,6 +20,7 @@ jobs:
       matrix:
         arch: [x86_64, aarch64]
         linux_version: ["6.12.76", "6.6.129", "6.1.166"]
+        profile: [release, debug]
         include:
           - arch: x86_64
             runner: ubuntu-24.04
@@ -37,7 +38,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build sysroot
-        run: ./create-sysroot.sh --arch=${{ matrix.arch }} --linux-version=${{ matrix.linux_version }}
+        run: ./create-sysroot.sh --arch=${{ matrix.arch }} --linux-version=${{ matrix.linux_version }} --profile=${{ matrix.profile }}
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2

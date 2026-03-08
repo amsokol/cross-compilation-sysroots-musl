@@ -4,6 +4,7 @@ set -euo pipefail
 MUSL_VERSION="1.2.5"
 LINUX_VERSION="6.12.76"
 TARGET_ARCH="x86_64"
+BUILD_PROFILE="release"
 OUT_DIR="$(pwd)/output"
 
 for arg in "$@"; do
@@ -17,6 +18,9 @@ for arg in "$@"; do
     --linux-version=*)
       LINUX_VERSION="${arg#*=}"
       ;;
+    --profile=*)
+      BUILD_PROFILE="${arg#*=}"
+      ;;
     --out=*)
       OUT_DIR="${arg#*=}"
       ;;
@@ -26,6 +30,19 @@ for arg in "$@"; do
       ;;
   esac
 done
+
+case "$BUILD_PROFILE" in
+  release)
+    CFLAGS="-O3 -DNDEBUG"
+    ;;
+  debug)
+    CFLAGS="-O0 -g"
+    ;;
+  *)
+    echo "Error: Unsupported profile: $BUILD_PROFILE (use release or debug)" >&2
+    exit 1
+    ;;
+esac
 
 case "$TARGET_ARCH" in
   amd64|x86_64)
@@ -70,7 +87,12 @@ for cmd in wget tar make rsync; do
   fi
 done
 
-SYSROOT_NAME="musl-${MUSL_VERSION}-linux-${LINUX_VERSION}-sysroot-${TARGET_ARCH}"
+PROFILE_SUFFIX=""
+if [ "$BUILD_PROFILE" = "debug" ]; then
+    PROFILE_SUFFIX="-debug"
+fi
+
+SYSROOT_NAME="musl-${MUSL_VERSION}-linux-${LINUX_VERSION}-sysroot-${TARGET_ARCH}${PROFILE_SUFFIX}"
 
 echo "============================================="
 echo " musl sysroot builder"
@@ -78,6 +100,7 @@ echo "============================================="
 echo " musl:            ${MUSL_VERSION}"
 echo " Linux headers:   ${LINUX_VERSION}"
 echo " Target:          ${MUSL_TRIPLE}"
+echo " Profile:         ${BUILD_PROFILE} (CFLAGS: ${CFLAGS})"
 echo " Host:            ${HOST_ARCH}"
 echo " Compiler:        ${CC}"
 echo " Output:          ${OUT_DIR}/${SYSROOT_NAME}.tar.xz"
@@ -114,6 +137,7 @@ cd "${WORK_DIR}/musl-${MUSL_VERSION}"
     --prefix="/usr" \
     --syslibdir="/usr/lib" \
     CC="${CC}" \
+    CFLAGS="${CFLAGS}" \
     AR="$(command -v ar)" \
     RANLIB="$(command -v ranlib)"
 
@@ -145,6 +169,15 @@ echo ">>> Creating stub libraries (libatomic, libstdc++, libc++)..."
 for lib in libatomic.a libstdc++.a libc++.a; do
     ar rcs "${SYSROOT_DIR}/usr/lib/${lib}"
 done
+
+# ── Strip debug symbols (release only) ────────────────────────────────
+
+if [ "$BUILD_PROFILE" = "release" ]; then
+    echo ""
+    echo ">>> Stripping debug symbols..."
+    find "${SYSROOT_DIR}/usr/lib" -name '*.a' -exec strip --strip-debug {} +
+    find "${SYSROOT_DIR}/usr/lib" -name '*.o' -exec strip --strip-debug {} +
+fi
 
 # ── Package ──────────────────────────────────────────────────────────
 
