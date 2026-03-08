@@ -185,18 +185,6 @@ make -s ARCH="$LINUX_ARCH" headers_install INSTALL_HDR_PATH="${SYSROOT_DIR}/usr"
 
 find "${SYSROOT_DIR}" \( -name '.install' -o -name '..install.cmd' \) -delete 2>/dev/null || true
 
-# ── Stub libraries ───────────────────────────────────────────────────
-# toolchains_llvm's cc toolchain links -latomic and -l:libstdc++.a by default.
-# musl doesn't provide these; create empty archives so the linker is satisfied.
-# They contribute no code -- atomics are handled by compiler builtins, and
-# libstdc++ is irrelevant for pure-C/Rust projects.
-
-echo ""
-echo ">>> Creating stub libraries (libatomic, libstdc++, libc++)..."
-for lib in libatomic.a libstdc++.a libc++.a libgcc_s.a; do
-    ar rcs "${SYSROOT_DIR}/usr/lib/${lib}"
-done
-
 # ── Strip debug symbols (release only) ────────────────────────────────
 
 if [ "$BUILD_PROFILE" = "release" ]; then
