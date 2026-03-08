@@ -1,12 +1,12 @@
 name: Build musl sysroots
 
 on:
-  push:
-    branches: [main]
-    tags: ["*"]
-  pull_request:
-    branches: [main]
+  release:
+    types: [published]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -39,35 +39,12 @@ jobs:
       - name: Build sysroot
         run: ./create-sysroot.sh --arch=${{ matrix.arch }} --linux-version=${{ matrix.linux_version }}
 
-      - name: Upload sysroot
-        uses: actions/upload-artifact@v4
-        with:
-          name: sysroot-${{ matrix.arch }}-linux-${{ matrix.linux_version }}
-          path: output/*.tar.xz
-
-  release:
-    name: Create release
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Collect release assets
+      - name: Generate checksum
         run: |
-          mkdir -p release
-          cp artifacts/sysroot-*/*.tar.xz release/
-          cd release
+          cd output
           sha256sum *.tar.xz > sha256sums.txt
 
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          files: release/*
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" output/*.tar.xz output/sha256sums.txt --clobber
