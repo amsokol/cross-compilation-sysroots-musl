@@ -28,22 +28,41 @@ Alternatively, `clang` works as a cross-compiler for any target.
 ## Usage
 
 ```bash
-./create-sysroot.sh --arch=ARCH [--musl-version=VER] [--linux-version=VER] [--out=DIR]
+./create-sysroot.sh --arch=ARCH [--musl-version=VER] [--linux-version=VER] [--profile=PROFILE] [--variant=VARIANT] [--out=DIR]
 ```
 
-| Flag              | Default    | Description                                                |
-| ----------------- | ---------- | ---------------------------------------------------------- |
-| `--arch`          | `x86_64`   | Target architecture: `x86_64`/`amd64` or `aarch64`/`arm64` |
-| `--musl-version`  | `1.2.5`    | musl libc version                                          |
-| `--linux-version` | `6.12.76`  | Linux kernel version (for UAPI headers)                    |
-| `--out`           | `./output` | Output directory for the tarball                           |
+| Flag              | Default    | Description                                                             |
+| ----------------- | ---------- | ----------------------------------------------------------------------- |
+| `--arch`          | `x86_64`   | Target architecture: `x86_64`/`amd64` or `aarch64`/`arm64`              |
+| `--musl-version`  | `1.2.5`    | musl libc version                                                       |
+| `--linux-version` | `6.12.76`  | Linux kernel version (for UAPI headers)                                 |
+| `--profile`       | `release`  | Build profile: `release` (`-O3`, stripped) or `debug` (`-O0 -g`)        |
+| `--variant`       | *(none)*   | x86-64 microarchitecture level: `v1`, `v2`, `v3`, or `v4` (x86_64 only) |
+| `--out`           | `./output` | Output directory for the tarball                                        |
+
+### x86-64 microarchitecture levels
+
+| Variant | `-march`    | Key features                                      |
+| ------- | ----------- | ------------------------------------------------- |
+| `v1`    | `x86-64`    | Baseline (SSE, SSE2)                              |
+| `v2`    | `x86-64-v2` | + SSE3, SSE4.1, SSE4.2, SSSE3, POPCNT, CMPXCHG16B |
+| `v3`    | `x86-64-v3` | + AVX, AVX2, BMI1, BMI2, F16C, FMA, LZCNT, MOVBE  |
+| `v4`    | `x86-64-v4` | + AVX-512F/BW/CD/DQ/VL                            |
+
+See [x86-64 microarchitecture levels](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) for details.
 
 ## Build sysroots
 
-### x86_64
+### x86_64 (baseline)
 
 ```bash
 ./create-sysroot.sh --arch=x86_64
+```
+
+### x86_64 with microarchitecture variant
+
+```bash
+./create-sysroot.sh --arch=x86_64 --variant=v3
 ```
 
 ### aarch64
@@ -52,11 +71,21 @@ Alternatively, `clang` works as a cross-compiler for any target.
 ./create-sysroot.sh --arch=aarch64
 ```
 
+### Debug build
+
+```bash
+./create-sysroot.sh --arch=x86_64 --profile=debug
+```
+
 Output tarballs are written to `./output/`:
 
 ```text
 output/
 ├── musl-1.2.5-linux-6.12.76-sysroot-x86_64.tar.xz
+├── musl-1.2.5-linux-6.12.76-sysroot-x86_64-v2.tar.xz
+├── musl-1.2.5-linux-6.12.76-sysroot-x86_64-v3.tar.xz
+├── musl-1.2.5-linux-6.12.76-sysroot-x86_64-v4.tar.xz
+├── musl-1.2.5-linux-6.12.76-sysroot-x86_64-debug.tar.xz
 └── musl-1.2.5-linux-6.12.76-sysroot-aarch64.tar.xz
 ```
 
