@@ -39,12 +39,8 @@ jobs:
       - name: Build sysroot
         run: ./create-sysroot.sh --arch=${{ matrix.arch }} --linux-version=${{ matrix.linux_version }}
 
-      - name: Generate checksum
-        run: |
-          cd output
-          sha256sum *.tar.xz > sha256sums.txt
-
       - name: Upload release assets
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ github.event.release.tag_name }}" output/*.tar.xz output/sha256sums.txt --clobber
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: output/*.tar.xz
