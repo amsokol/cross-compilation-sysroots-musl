@@ -5,6 +5,7 @@ MUSL_VERSION="1.2.5"
 LINUX_VERSION="6.12.76"
 TARGET_ARCH="x86_64"
 BUILD_PROFILE="release"
+VARIANT=""
 OUT_DIR="$(pwd)/output"
 
 for arg in "$@"; do
@@ -20,6 +21,9 @@ for arg in "$@"; do
       ;;
     --profile=*)
       BUILD_PROFILE="${arg#*=}"
+      ;;
+    --variant=*)
+      VARIANT="${arg#*=}"
       ;;
     --out=*)
       OUT_DIR="${arg#*=}"
@@ -61,6 +65,23 @@ case "$TARGET_ARCH" in
     ;;
 esac
 
+if [ -n "$VARIANT" ]; then
+  if [ "$TARGET_ARCH" != "x86_64" ]; then
+    echo "Error: --variant is only supported for x86_64, not ${TARGET_ARCH}" >&2
+    exit 1
+  fi
+  case "$VARIANT" in
+    v1) CFLAGS="${CFLAGS} -march=x86-64-v1" ;;
+    v2) CFLAGS="${CFLAGS} -march=x86-64-v2" ;;
+    v3) CFLAGS="${CFLAGS} -march=x86-64-v3" ;;
+    v4) CFLAGS="${CFLAGS} -march=x86-64-v4" ;;
+    *)
+      echo "Error: Unsupported variant: $VARIANT (use v1, v2, v3, or v4)" >&2
+      exit 1
+      ;;
+  esac
+fi
+
 HOST_ARCH="$(uname -m)"
 
 if [ "$HOST_ARCH" = "$TARGET_ARCH" ]; then
@@ -87,12 +108,17 @@ for cmd in wget tar make rsync; do
   fi
 done
 
+VARIANT_SUFFIX=""
+if [ -n "$VARIANT" ]; then
+    VARIANT_SUFFIX="-${VARIANT}"
+fi
+
 PROFILE_SUFFIX=""
 if [ "$BUILD_PROFILE" = "debug" ]; then
     PROFILE_SUFFIX="-debug"
 fi
 
-SYSROOT_NAME="musl-${MUSL_VERSION}-linux-${LINUX_VERSION}-sysroot-${TARGET_ARCH}${PROFILE_SUFFIX}"
+SYSROOT_NAME="musl-${MUSL_VERSION}-linux-${LINUX_VERSION}-sysroot-${TARGET_ARCH}${VARIANT_SUFFIX}${PROFILE_SUFFIX}"
 
 echo "============================================="
 echo " musl sysroot builder"
@@ -100,6 +126,7 @@ echo "============================================="
 echo " musl:            ${MUSL_VERSION}"
 echo " Linux headers:   ${LINUX_VERSION}"
 echo " Target:          ${MUSL_TRIPLE}"
+echo " Variant:         ${VARIANT:-baseline}"
 echo " Profile:         ${BUILD_PROFILE} (CFLAGS: ${CFLAGS})"
 echo " Host:            ${HOST_ARCH}"
 echo " Compiler:        ${CC}"
