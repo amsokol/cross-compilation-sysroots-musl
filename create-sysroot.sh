@@ -71,7 +71,7 @@ if [ -n "$VARIANT" ]; then
     exit 1
   fi
   case "$VARIANT" in
-    v1) CFLAGS="${CFLAGS} -march=x86-64-v1" ;;
+    v1) CFLAGS="${CFLAGS} -march=x86-64" ;;
     v2) CFLAGS="${CFLAGS} -march=x86-64-v2" ;;
     v3) CFLAGS="${CFLAGS} -march=x86-64-v3" ;;
     v4) CFLAGS="${CFLAGS} -march=x86-64-v4" ;;
@@ -109,7 +109,7 @@ for cmd in wget tar make rsync; do
 done
 
 VARIANT_SUFFIX=""
-if [ -n "$VARIANT" ]; then
+if [ -n "$VARIANT" ] && [ "$VARIANT" != "v1" ]; then
     VARIANT_SUFFIX="-${VARIANT}"
 fi
 
