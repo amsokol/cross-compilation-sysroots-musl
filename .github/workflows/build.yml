@@ -44,7 +44,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y --no-install-recommends \
-            build-essential wget xz-utils rsync git ca-certificates
+            build-essential wget xz-utils rsync git ca-certificates curl
 
       - name: Checkout
         uses: actions/checkout@v5
@@ -58,11 +58,18 @@ jobs:
           ./create-sysroot.sh ${ARGS}
 
       - name: Upload release assets
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ github.event.release.tag_name }}
-          artifacts: output/*.tar.xz
-          allowUpdates: true
-          omitBodyDuringUpdate: true
-          omitNameDuringUpdate: true
-          omitDraftDuringUpdate: true
+        if: github.event_name == 'release'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          for file in output/*.tar.xz; do
+            filename=$(basename "$file")
+            echo "Uploading $filename..."
+            curl -sL --fail-with-body \
+              -X POST \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Content-Type: application/x-xz" \
+              --data-binary @"$file" \
+              "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets?name=$filename"
+            echo ""
+          done
