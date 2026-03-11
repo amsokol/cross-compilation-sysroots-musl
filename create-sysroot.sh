@@ -163,6 +163,7 @@ cd "${WORK_DIR}/musl-${MUSL_VERSION}"
     --target="${MUSL_TRIPLE}" \
     --prefix="/usr" \
     --syslibdir="/usr/lib" \
+    --disable-shared \
     CC="${CC}" \
     CFLAGS="${CFLAGS}" \
     AR="$(command -v ar)" \
