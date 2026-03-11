@@ -8,9 +8,6 @@ on:
 permissions:
   contents: write
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build:
     name: Build sysroot (${{ matrix.arch }}${{ matrix.variant && format('-{0}', matrix.variant) || '' }}, linux ${{ matrix.linux_version }}, ${{ matrix.profile }})
@@ -61,7 +58,7 @@ jobs:
           ./create-sysroot.sh ${ARGS}
 
       - name: Upload release assets
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.5.0
         with:
           tag_name: ${{ github.event.release.tag_name }}
           files: output/*.tar.xz
