@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-MUSL_VERSION="1.2.5"
-LINUX_VERSION="6.12.76"
+MUSL_VERSION="1.2.6"
+LINUX_VERSION="6.12.77"
 TARGET_ARCH="x86_64"
 BUILD_PROFILE="release"
 VARIANT=""

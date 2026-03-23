@@ -34,8 +34,8 @@ Alternatively, `clang` works as a cross-compiler for any target.
 | Flag              | Default    | Description                                                             |
 | ----------------- | ---------- | ----------------------------------------------------------------------- |
 | `--arch`          | `x86_64`   | Target architecture: `x86_64`/`amd64` or `aarch64`/`arm64`              |
-| `--musl-version`  | `1.2.5`    | musl libc version                                                       |
-| `--linux-version` | `6.12.76`  | Linux kernel version (for UAPI headers)                                 |
+| `--musl-version`  | `1.2.6`    | musl libc version                                                       |
+| `--linux-version` | `6.12.77`  | Linux kernel version (for UAPI headers)                                 |
 | `--profile`       | `release`  | Build profile: `release` (`-O3`, stripped) or `debug` (`-O0 -g`)        |
 | `--variant`       | *(none)*   | x86-64 microarchitecture level: `v1`, `v2`, `v3`, or `v4` (x86_64 only) |
 | `--out`           | `./output` | Output directory for the tarball                                        |
@@ -81,12 +81,12 @@ Output tarballs are written to `./output/`:
 
 ```text
 output/
-├── musl-1.2.5-linux-6.12.76-sysroot-x86_64.tar.xz
-├── musl-1.2.5-linux-6.12.76-sysroot-x86_64-v2.tar.xz
-├── musl-1.2.5-linux-6.12.76-sysroot-x86_64-v3.tar.xz
-├── musl-1.2.5-linux-6.12.76-sysroot-x86_64-v4.tar.xz
-├── musl-1.2.5-linux-6.12.76-sysroot-x86_64-debug.tar.xz
-└── musl-1.2.5-linux-6.12.76-sysroot-aarch64.tar.xz
+├── musl-1.2.6-linux-6.12.77-sysroot-x86_64.tar.xz
+├── musl-1.2.6-linux-6.12.77-sysroot-x86_64-v2.tar.xz
+├── musl-1.2.6-linux-6.12.77-sysroot-x86_64-v3.tar.xz
+├── musl-1.2.6-linux-6.12.77-sysroot-x86_64-v4.tar.xz
+├── musl-1.2.6-linux-6.12.77-sysroot-x86_64-debug.tar.xz
+└── musl-1.2.6-linux-6.12.77-sysroot-aarch64.tar.xz
 ```
 
 ## Sysroot contents
@@ -116,5 +116,5 @@ usr/
 
 | Component            | Version       |
 | -------------------- | ------------- |
-| musl libc            | 1.2.5         |
-| Linux kernel headers | 6.12.76 (LTS) |
+| musl libc            | 1.2.6         |
+| Linux kernel headers | 6.12.77 (LTS) |

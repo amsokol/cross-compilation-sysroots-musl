@@ -20,7 +20,7 @@ jobs:
       matrix:
         arch: [x86_64, aarch64]
         variant: [v1, v2, v3, v4, ""]
-        linux_version: ["6.12.76", "6.6.129", "6.1.166"]
+        linux_version: ["6.12.77", "6.6.129", "6.1.166", "6.18.19"]
         profile: [release, debug]
         exclude:
           - arch: aarch64
