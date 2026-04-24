@@ -2,7 +2,7 @@ name: Build musl sysroots
 
 on:
   release:
-    types: [published]
+    types: [ published ]
   workflow_dispatch:
 
 permissions:
@@ -10,7 +10,9 @@ permissions:
 
 jobs:
   build:
-    name: Build sysroot (${{ matrix.arch }}${{ matrix.variant && format('-{0}', matrix.variant) || '' }}, linux ${{ matrix.linux_version }}, ${{ matrix.profile }})
+    name: Build sysroot (${{ matrix.arch }}${{ matrix.variant && format('-{0}',
+      matrix.variant) || '' }}, linux ${{ matrix.linux_version }}, ${{
+      matrix.profile }})
     runs-on: ${{ matrix.runner }}
     container:
       image: debian:13
@@ -18,10 +20,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [x86_64, aarch64]
-        variant: [v1, v2, v3, v4, ""]
-        linux_version: ["6.12.77", "6.6.129", "6.1.166", "6.18.19"]
-        profile: [release, debug]
+        arch: [ x86_64, aarch64 ]
+        variant: [ v1, v2, v3, v4, "" ]
+        linux_version: [ "6.12.82", "6.6.135", "6.1.169", "6.18.23" ]
+        profile: [ release, debug ]
         exclude:
           - arch: aarch64
             variant: v1
